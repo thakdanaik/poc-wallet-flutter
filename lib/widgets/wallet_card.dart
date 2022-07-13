@@ -4,7 +4,9 @@ class WalletCard extends StatelessWidget {
   final String name;
   final String cardNo;
   final double height;
+  final double verticalMargin;
   final Color color;
+  final bool isShowShadow;
 
   const WalletCard({
     Key? key,
@@ -12,22 +14,25 @@ class WalletCard extends StatelessWidget {
     required this.cardNo,
     required this.height,
     required this.color,
+    required this.verticalMargin,
+    this.isShowShadow = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: height,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: verticalMargin),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: color,
-        boxShadow: [
+        border: Border.all(color: Colors.black, width: 0.2),
+        boxShadow: isShowShadow ? [
           BoxShadow(
             color: Colors.black.withAlpha(100),
             blurRadius: 10,
           ),
-        ],
+        ] : null,
         borderRadius: const BorderRadius.all(
           Radius.circular(20),
         ),

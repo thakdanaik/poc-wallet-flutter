@@ -18,7 +18,10 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Wallet')),
         body: const SafeArea(
-          child: WalletList(),
+          child: WalletList(
+            cardHeight: 150,
+            cardHeightFactor: 0.7,
+          ),
         ),
       ),
     );
