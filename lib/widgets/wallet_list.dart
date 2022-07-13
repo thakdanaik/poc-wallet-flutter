@@ -79,39 +79,5 @@ class _WalletListState extends State<WalletList> {
         ),
       ],
     );
-
-    return ListView.builder(
-        controller: _scrollController,
-        itemCount: widget.dataList.length + 1,
-        itemBuilder: (context, index) {
-          if (index == widget.dataList.length) {
-            return SizedBox(
-              height: widget.cardHeight,
-            );
-          }
-
-          double dy = 0;
-          if (_indexAtTop == index) {
-            dy = _scrollController.offset - (_remainingHeight * index);
-          }
-
-          CardData data = widget.dataList[index];
-          return Transform.translate(
-            offset: Offset(0, dy),
-            child: Align(
-              heightFactor: widget.cardHeightFactor,
-              alignment: Alignment.topCenter,
-              child: WalletCard(
-                name: data.name,
-                cardNo: data.cardNo,
-                height: widget.cardHeight,
-                verticalMargin: _verticalMargin,
-                color: data.cardColor,
-                isShowShadow: _indexAtTop != index,
-                isMultipleCard: data.isMultiCard,
-              ),
-            ),
-          );
-        });
   }
 }
