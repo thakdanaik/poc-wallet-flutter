@@ -4,13 +4,15 @@ class WalletCard extends StatelessWidget {
   final String name;
   final String cardNo;
   final double height;
+  final Color color;
 
-  const WalletCard(
-      {Key? key,
-      required this.name,
-      required this.cardNo,
-      required this.height})
-      : super(key: key);
+  const WalletCard({
+    Key? key,
+    required this.name,
+    required this.cardNo,
+    required this.height,
+    required this.color,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class WalletCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: color,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(100),

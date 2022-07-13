@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poc_wallet_flutter/widgets/wallet_card.dart';
+import 'package:poc_wallet_flutter/widgets/wallet_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,11 +18,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Wallet')),
         body: const SafeArea(
-          child: WalletCard(
-            name: 'Donut Shop',
-            cardNo: 'XXXXXX-9999',
-            height: 150,
-          ),
+          child: WalletList(),
         ),
       ),
     );
