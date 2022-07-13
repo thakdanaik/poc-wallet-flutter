@@ -68,6 +68,7 @@ class _WalletListState extends State<WalletList> {
                 verticalMargin: _verticalMargin,
                 color: data.cardColor,
                 isShowShadow: _indexAtTop != index,
+                isMultipleCard: data.isMultiCard,
               ),
             ),
           );
