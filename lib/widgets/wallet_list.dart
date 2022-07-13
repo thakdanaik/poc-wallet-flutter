@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:poc_wallet_flutter/models/card_data.dart';
 import 'package:poc_wallet_flutter/widgets/wallet_card.dart';
 
 class WalletList extends StatefulWidget {
+  final List<CardData> dataList;
   final double cardHeight;
   final double cardHeightFactor;
 
-  const WalletList(
-      {Key? key, required this.cardHeight, required this.cardHeightFactor})
-      : super(key: key);
+  const WalletList({
+    Key? key,
+    required this.dataList,
+    required this.cardHeight,
+    required this.cardHeightFactor,
+  }) : super(key: key);
 
   @override
   State<WalletList> createState() => _WalletListState();
@@ -37,9 +42,9 @@ class _WalletListState extends State<WalletList> {
   Widget build(BuildContext context) {
     return ListView.builder(
         controller: _scrollController,
-        itemCount: 25 + 1,
+        itemCount: widget.dataList.length + 1,
         itemBuilder: (context, index) {
-          if (index == 25) {
+          if (index ==  widget.dataList.length) {
             return SizedBox(
               height: widget.cardHeight,
             );
@@ -50,17 +55,18 @@ class _WalletListState extends State<WalletList> {
             dy = _scrollController.offset - (_remainingHeight * index);
           }
 
+          CardData data = widget.dataList[index];
           return Transform.translate(
             offset: Offset(0, dy),
             child: Align(
               heightFactor: widget.cardHeightFactor,
               alignment: Alignment.topCenter,
               child: WalletCard(
-                name: 'Donut Shop $index',
-                cardNo: 'XXXXXX-9999',
+                name: data.name,
+                cardNo: data.cardNo,
                 height: widget.cardHeight,
                 verticalMargin: _verticalMargin,
-                color: Colors.white,
+                color: data.cardColor,
                 isShowShadow: _indexAtTop != index,
               ),
             ),

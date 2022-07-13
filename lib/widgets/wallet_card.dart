@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class WalletCard extends StatelessWidget {
   final String name;
-  final String cardNo;
+  final String? cardNo;
   final double height;
   final double verticalMargin;
   final Color color;
@@ -11,12 +11,14 @@ class WalletCard extends StatelessWidget {
   const WalletCard({
     Key? key,
     required this.name,
-    required this.cardNo,
     required this.height,
     required this.color,
     required this.verticalMargin,
+    this.cardNo,
     this.isShowShadow = true,
   }) : super(key: key);
+
+  Color get textColor => color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +47,9 @@ class WalletCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(name,
-                  style: const TextStyle(
-                      fontSize: 28, fontWeight: FontWeight.bold)),
-              Text(cardNo),
+                  style: TextStyle(
+                      fontSize: 28, fontWeight: FontWeight.bold, color: textColor)),
+              if(cardNo != null) Text(cardNo!, style: TextStyle(color: textColor)),
             ],
           ),
           //----- Card Detail -----//
