@@ -7,12 +7,21 @@ class WalletList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 5,
-      itemBuilder: (context, index) =>
-          const WalletCard(name: 'Donut Shop',
+      padding: const EdgeInsets.only(top: 30),
+      itemCount: 5+1,
+      itemBuilder: (context, index) {
+        if(index == 5){
+          return const SizedBox(height: 50,);
+        }
+
+        return const Align(
+          heightFactor: 0.7,
+          child: WalletCard(name: 'Donut Shop',
             cardNo: 'XXXXXX-9999',
             height: 150,
             color: Colors.white,),
+        );
+      }
     );
   }
 }
