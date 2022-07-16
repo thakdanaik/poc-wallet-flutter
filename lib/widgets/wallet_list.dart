@@ -20,8 +20,9 @@ class WalletList extends StatefulWidget {
 
 class _WalletListState extends State<WalletList> {
   final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0);
+
   final double _verticalMargin = 10;
-  int _indexAtTop = 0;
 
   double get _remainingHeight =>
       ((widget.cardHeight + (_verticalMargin * 2)) * widget.cardHeightFactor);
@@ -29,12 +30,9 @@ class _WalletListState extends State<WalletList> {
   @override
   void initState() {
     _scrollController.addListener(() {
-      double value = _scrollController.offset / _remainingHeight;
-
-      setState(() {
-        _indexAtTop = value.floor();
-      });
+      _scrollOffset.value = _scrollController.offset;
     });
+
     super.initState();
   }
 
@@ -46,14 +44,24 @@ class _WalletListState extends State<WalletList> {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              double dy = 0;
-              if (_indexAtTop == index) {
-                dy = _scrollController.offset - (_remainingHeight * index);
-              }
-
               CardData data = widget.dataList[index];
-              return Transform.translate(
-                offset: Offset(0, dy),
+
+              return ValueListenableBuilder(
+                valueListenable: _scrollOffset,
+                builder: (context,double value, child) {
+                  double dy = 0;
+
+                  int indexAtTop = (value / _remainingHeight).floor();
+
+                  if (indexAtTop == index) {
+                    dy = _scrollController.offset - (_remainingHeight * index);
+                  }
+
+                  return Transform.translate(
+                      offset: Offset(0, dy),
+                      child: child
+                  );
+                },
                 child: Align(
                   heightFactor: widget.cardHeightFactor,
                   alignment: Alignment.topCenter,
@@ -63,7 +71,7 @@ class _WalletListState extends State<WalletList> {
                     height: widget.cardHeight,
                     verticalMargin: _verticalMargin,
                     color: data.cardColor,
-                    isShowShadow: _indexAtTop != index,
+                    // isShowShadow: indexAtTop != index,
                     isMultipleCard: data.isMultiCard,
                   ),
                 ),
