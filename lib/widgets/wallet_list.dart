@@ -23,7 +23,6 @@ class _WalletListState extends State<WalletList> with TickerProviderStateMixin {
   late AnimationController _otherCardController;
   late AnimationController _selectionController;
   final double _verticalMargin = 10;
-  int _indexAtTop = 0;
   int _selectionCard = 0;
 
   double get _remainingHeight =>
@@ -50,13 +49,6 @@ class _WalletListState extends State<WalletList> with TickerProviderStateMixin {
       setState(() {});
     });
 
-    _scrollController.addListener(() {
-      double value = _scrollController.offset / _remainingHeight;
-
-      setState(() {
-        _indexAtTop = value.floor();
-      });
-    });
     super.initState();
   }
 
@@ -92,12 +84,7 @@ class _WalletListState extends State<WalletList> with TickerProviderStateMixin {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              double dy = 0;
               double dyAnimation = 0;
-
-              if (_indexAtTop == index) {
-                dy = _scrollController.offset - (_remainingHeight * index);
-              }
 
               if (_otherCardController.value > 0 && _selectionCard != index) {
                 int vectorFactor = index.compareTo(_selectionCard);
@@ -113,21 +100,19 @@ class _WalletListState extends State<WalletList> with TickerProviderStateMixin {
 
               CardData data = widget.dataList[index];
               return Transform.translate(
-                offset: Offset(0, dy + dyAnimation),
-                child: Align(
-                  heightFactor: widget.cardHeightFactor,
-                  alignment: Alignment.topCenter,
-                  child: GestureDetector(
-                    onTap: () => _onCardTap(index),
-                    child: WalletCard(
-                      name: data.name,
-                      cardNo: data.cardNo,
-                      height: widget.cardHeight,
-                      verticalMargin: _verticalMargin,
-                      color: data.cardColor,
-                      isShowShadow: _indexAtTop != index,
-                      isMultipleCard: data.isMultiCard,
-                    ),
+                offset: Offset(0, dyAnimation),
+                child: GestureDetector(
+                  onTap: () => _onCardTap(index),
+                  child: WalletCard(
+                    index: index,
+                    name: data.name,
+                    cardNo: data.cardNo,
+                    height: widget.cardHeight,
+                    verticalMargin: _verticalMargin,
+                    color: data.cardColor,
+                    isMultipleCard: data.isMultiCard,
+                    cardHeightFactor: widget.cardHeightFactor,
+                    scrollController: _scrollController,
                   ),
                 ),
               );
