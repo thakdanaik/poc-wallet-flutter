@@ -20,19 +20,11 @@ class WalletList extends StatefulWidget {
 
 class _WalletListState extends State<WalletList> {
   final ScrollController _scrollController = ScrollController();
-  final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0);
 
   final double _verticalMargin = 10;
 
-  double get _remainingHeight =>
-      ((widget.cardHeight + (_verticalMargin * 2)) * widget.cardHeightFactor);
-
   @override
   void initState() {
-    _scrollController.addListener(() {
-      _scrollOffset.value = _scrollController.offset;
-    });
-
     super.initState();
   }
 
@@ -46,35 +38,17 @@ class _WalletListState extends State<WalletList> {
             (context, index) {
               CardData data = widget.dataList[index];
 
-              return ValueListenableBuilder(
-                valueListenable: _scrollOffset,
-                builder: (context,double value, child) {
-                  double dy = 0;
-
-                  int indexAtTop = (value / _remainingHeight).floor();
-
-                  if (indexAtTop == index) {
-                    dy = _scrollController.offset - (_remainingHeight * index);
-                  }
-
-                  return Transform.translate(
-                      offset: Offset(0, dy),
-                      child: child
-                  );
-                },
-                child: Align(
-                  heightFactor: widget.cardHeightFactor,
-                  alignment: Alignment.topCenter,
-                  child: WalletCard(
-                    name: data.name,
-                    cardNo: data.cardNo,
-                    height: widget.cardHeight,
-                    verticalMargin: _verticalMargin,
-                    color: data.cardColor,
-                    // isShowShadow: indexAtTop != index,
-                    isMultipleCard: data.isMultiCard,
-                  ),
-                ),
+              return WalletCard(
+                index: index,
+                name: data.name,
+                cardNo: data.cardNo,
+                height: widget.cardHeight,
+                verticalMargin: _verticalMargin,
+                color: data.cardColor,
+                // isShowShadow: indexAtTop != index,
+                isMultipleCard: data.isMultiCard,
+                cardHeightFactor: widget.cardHeightFactor,
+                scrollController: _scrollController,
               );
             },
             childCount: widget.dataList.length,
