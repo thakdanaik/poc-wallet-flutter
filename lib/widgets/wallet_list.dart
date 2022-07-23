@@ -104,7 +104,6 @@ class _WalletListState extends State<WalletList> with TickerProviderStateMixin {
                 child: GestureDetector(
                   onTap: () => _onCardTap(index),
                   child: WalletCard(
-                    index: index,
                     name: data.name,
                     cardNo: data.cardNo,
                     height: widget.cardHeight,

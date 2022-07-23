@@ -1,9 +1,8 @@
-import 'dart:math';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class WalletCard extends StatefulWidget {
-  final int index;
   final String name;
   final String? cardNo;
   final double height;
@@ -23,7 +22,6 @@ class WalletCard extends StatefulWidget {
     this.isMultipleCard = false,
     required this.cardHeightFactor,
     required this.scrollController,
-    required this.index,
   }) : super(key: key);
 
   @override
@@ -34,30 +32,66 @@ class _WalletCardState extends State<WalletCard> {
   Color get textColor =>
       widget.color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
-  double get _remainingHeight =>
-      ((widget.height + (widget.verticalMargin * 2)) * widget.cardHeightFactor);
-
   final ValueNotifier<double> _translateOffset = ValueNotifier<double>(0);
+  final GlobalKey _globalKey = GlobalKey();
+  double? _actualCardOffset;
 
   @override
   void initState() {
-    widget.scrollController.addListener(() {
-      int indexAtTop =
-          max(0, (widget.scrollController.offset / _remainingHeight).floor());
-
-      if (indexAtTop == widget.index) {
-        _translateOffset.value =
-            widget.scrollController.offset - (_remainingHeight * widget.index);
-      } else {
-        _translateOffset.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _actualCardOffset ??= _findCardOffsetInListview();
+      if (_actualCardOffset != null) {
+        widget.scrollController.addListener(() {
+          if (_actualCardOffset != null) {
+            if (widget.scrollController.offset >= _actualCardOffset!) {
+              _translateOffset.value =
+                  widget.scrollController.offset - _actualCardOffset!;
+            } else {
+              _translateOffset.value = 0;
+            }
+          }
+        });
       }
     });
+
     super.initState();
+  }
+
+  double? _findCardOffsetInListview() {
+    if (_globalKey.currentContext == null) {
+      return null;
+    }
+
+    RenderTransform currentRender =
+        _globalKey.currentContext!.findRenderObject() as RenderTransform;
+
+    /// Find RenderIndexedSemantics from the parent widget.
+    /// Up to 5 layers above in the widget tree.
+    RenderIndexedSemantics? indexedSemantics;
+    AbstractNode? tempRender = currentRender.parent;
+    for (int i = 0; i < 5; i++) {
+      tempRender = tempRender?.parent;
+      if (tempRender == null) {
+        return null;
+      } else if (tempRender is RenderIndexedSemantics) {
+        indexedSemantics = tempRender;
+        break;
+      }
+    }
+
+    if (indexedSemantics != null) {
+      var indexedData =
+          indexedSemantics.parentData as SliverMultiBoxAdaptorParentData;
+      return indexedData.layoutOffset;
+    }
+
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
+      key: _globalKey,
       valueListenable: _translateOffset,
       builder: (context, double value, child) {
         return Transform.translate(
@@ -85,11 +119,11 @@ class _WalletCardState extends State<WalletCard> {
                   color: widget.color,
                   border: Border.all(color: Colors.black, width: 0.2),
                   boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(100),
-                            blurRadius: 10,
-                          ),
-                        ],
+                    BoxShadow(
+                      color: Colors.black.withAlpha(100),
+                      blurRadius: 10,
+                    ),
+                  ],
                   borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
@@ -139,11 +173,11 @@ class _WalletCardState extends State<WalletCard> {
             color: widget.color.withAlpha(100),
             border: Border.all(color: Colors.black, width: 0.2),
             boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(100),
-                      blurRadius: 10,
-                    ),
-                  ],
+              BoxShadow(
+                color: Colors.black.withAlpha(100),
+                blurRadius: 10,
+              ),
+            ],
             borderRadius: const BorderRadius.all(
               Radius.circular(20),
             ),
