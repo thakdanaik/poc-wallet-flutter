@@ -41,20 +41,17 @@ class _WalletCardState extends State<WalletCard> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _actualCardOffset ??= _findCardOffsetInListview();
       if (_actualCardOffset != null) {
-        widget.scrollController.addListener(() {
-          if (_actualCardOffset != null) {
-            if (widget.scrollController.offset >= _actualCardOffset!) {
-              _translateOffset.value =
-                  widget.scrollController.offset - _actualCardOffset!;
-            } else {
-              _translateOffset.value = 0;
-            }
-          }
-        });
+        widget.scrollController.addListener(_scrollAnimationFunction);
       }
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_scrollAnimationFunction);
+    super.dispose();
   }
 
   double? _findCardOffsetInListview() {
@@ -86,6 +83,17 @@ class _WalletCardState extends State<WalletCard> {
     }
 
     return null;
+  }
+
+  void _scrollAnimationFunction() {
+    if (_actualCardOffset != null) {
+      if (widget.scrollController.offset >= _actualCardOffset!) {
+        _translateOffset.value =
+            widget.scrollController.offset - _actualCardOffset!;
+      } else {
+        _translateOffset.value = 0;
+      }
+    }
   }
 
   @override
